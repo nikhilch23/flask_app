@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request, jsonify
 import random
-import pprint
 import pymongo
 
 client = pymongo.MongoClient('mongodb://localhost:27017/')
@@ -17,21 +16,34 @@ def main():
    return render_template('file.html')
 
 @app.route('/id', methods=['POST'])
-def id():
+
+def find_id():
    
    name = request.form['name']
-   entry = db.entries.find_one({'name': name})
-   if entry:
-      return 'name already exists'
+
+   if collection.find_one({'name': name}):
+      return 'name already exists and its id is {}'.format(collection.find_one({'name': name})['id'])
+
 
    else:	
       id1 = random.randint(10000000, 90000000) 
       d = { 'name': name,
             'id' : id1
           }
-      entries = db.entries
-      entries = entries.insert_one(d)
+
+      collection.insert_one(d)
       return str(id1)  
+
+
+@app.route('/name', methods=['POST'])
+
+def find_name():
+   id1 = request.form['id']
+   dic = collection.find_one({'id': int(id1)})
+   if dic:
+      return 'Your respective name is {}'.format(dic['name'])
+   else:
+      return "Wrong ID, please type again."
 
 app.run(port=5002)
 
