@@ -16,12 +16,14 @@ def main():
    return render_template('text.html')
 
 @app.route('/id', methods=['POST'])
+
 def find_id():
    
    name = request.form['name']
 
    if collection.find_one({'name': name}):
       return 'name already exists and its id is {}'.format(collection.find_one({'name': name})['id'])
+
 
    else:	
       id1 = random.randint(10000000, 90000000) 
@@ -34,6 +36,7 @@ def find_id():
 
 
 @app.route('/name', methods=['POST'])
+
 def find_name():
    id1 = request.form['id']
    dic = collection.find_one({'id': int(id1)})
